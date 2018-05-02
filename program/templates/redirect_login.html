@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+{% if aslab == False %}
+<meta http-equiv="refresh" content="3; URL={{ url_for('login') }}">
+{% else %}
+<meta http-equiv="refresh" content="3; URL={{ url_for('login_aslab') }}">
+{% endif %}
+<meta name="keywords" content="automatic redirection">
+</head>
+<body>
+    <h1>LOGIN BERHASIL</h1>
+    <p>Peramban ini akan otomatis mengarah ke login form</p>
+    {% if aslab == False %}
+    <p>Jika setelah 3 detik tidak mengarah ke login form, tekan <a href="{{ url_for('login') }}">tautan berikut</a></p>
+    {% else %}
+    <p>Jika setelah 3 detik tidak mengarah ke login form, tekan <a href="{{ url_for('login_aslab') }}">tautan berikut</a></p>
+    {% endif %}
+</body>
+</html>

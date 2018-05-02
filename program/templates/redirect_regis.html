@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+{% if aslab == False %}
+<meta http-equiv="refresh" content="3; URL={{ url_for('regis') }}">
+{% else %}
+<meta http-equiv="refresh" content="3; URL={{ url_for('remove_aslab') }}">
+{% endif %}
+<meta name="keywords" content="automatic redirection">
+</head>
+<body>
+    {% if aslab == False %}
+    <h1>REGISTRASI BERHASIL</h1>
+    <p>Peramban ini akan otomatis mengarah ke formulir registrasi</p>
+    <p>Jika setelah 3 detik tidak mengarah ke formulir registrasi, tekan <a href="{{ url_for('regis') }}">tautan berikut</a></p>
+    {% else %}
+    <h1>PENGHAPUSAN REGISTRASI BERHASIL</h1>
+    <p>Peramban ini akan otomatis mengarah ke formulir penghapusan registrasi</p>
+    <p>Jika setelah 3 detik tidak mengarah ke formulir penghapusan registrasi, tekan <a href="{{ url_for('remove_aslab') }}">tautan berikut</a></p>
+    {% endif %}
+</body>
+</html>

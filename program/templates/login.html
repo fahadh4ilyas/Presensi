@@ -1,0 +1,149 @@
+ <!DOCTYPE html>
+<html>
+<head>
+<style>
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,700);
+
+body {
+  background: #456;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.login {
+  width: 400px;
+  margin: 16px auto;
+  font-size: 16px;
+}
+
+.login-header,
+.login p {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.login-header {
+  background: #28d;
+  padding: 20px;
+  font-size: 1.4em;
+  font-weight: normal;
+  text-align: center;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.login-container {
+  background: #ebebeb;
+  padding: 12px;
+}
+
+.login p {
+  padding: 12px;
+}
+
+.login input,
+.login select {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  border-width: 1px;
+  border-style: solid;
+  padding: 16px;
+  outline: 0;
+  font-family: inherit;
+  font-size: 0.95em;
+}
+
+.login input[type="text"],
+.login input[type="password"] {
+  background: #fff;
+  border-color: #bbb;
+  color: #555;
+}
+
+.login input[type="text"]:focus,
+.login input[type="password"]:focus {
+  border-color: #888;
+}
+
+.login input[type="submit"] {
+  background: #28d;
+  border-color: transparent;
+  color: #fff;
+  cursor: pointer;
+}
+
+.login input[type="submit"]:hover {
+  background: #17c;
+}
+
+.login input[type="submit"]:focus {
+  border-color: #05a;
+}
+</style>
+<script>
+function doSomething(){
+    var npm = document.getElementById("npm").value;
+    var meja = document.getElementById("meja").value;
+    {% if aslab == False %}
+    var str = "{{url_for('get_login',mk=matkul,kl=kelas,np='',mj='')}}";
+    document.getElementById("submit").setAttribute("formaction",str.slice(0,-2)+npm+'/'+meja+'/');
+    {% else %}
+    var kls = document.getElementById("kelas").value;
+    var str = "{{url_for('get_login_aslab',mk=matkul,kl='',np='',mj='')}}";
+    document.getElementById("submit").setAttribute("formaction",str.slice(0,-3)+kls+'/'+npm+'/'+meja+'/');
+    {% endif %}
+}     
+</script>
+</head> 
+<body>
+<div class="login">
+    <h2 class="login-header">Presensi Praktikum<br>{{matkul}}<br>Kelas {{kelas}}</h2>
+    {% if aslab == False %}
+    <form class="login-container" action="{{url_for('get_login',mk=matkul,kl=kelas,np='0',mj='0')}}" method="post">
+    {% else %}
+    <form class="login-container" action="{{url_for('get_login_aslab',mk=matkul,kl=kelas,np='0',mj='0')}}" method="post">
+    {% endif %}
+        <p><input type="text" name="nama" pattern="([A-Za-z]+\.{0,1}\,{0,1}\s{0,1})+" placeholder="Nama" title="Masukkan Namamu Dengan Benar dan Lengkap!"></p>
+        <p><input id="npm" type="text" name="npm" pattern="1[4-8][0-9]{8}" placeholder="NPM" title="Hanya Angka Berawalan 14 s/d 18"></p>
+        <p>
+            <select id="meja" type="text" name="meja">
+                <option value="">Pilih Nomor Meja</option>
+                {% for i in meja %}
+                <option value={{i}}>{{i}}</option>
+                {% endfor %}
+            </select>
+        </p>
+        {% if aslab == True %}
+        <p>
+            <select id="kelas" type="text" name="kelas">
+                <option value="">Pilih Kelas</option>
+                {% for i in daftar_kelas %}
+                <option value="{{i}}">{{i}}</option>
+                {% endfor %}
+            </select>
+        </p>
+        <p>
+            <select type="text" name="hadir">
+                <option value="">Pilih Kehadiran</option>
+                <option value="1">Hadir</option>
+                <option value="0">Tidak Hadir</option>
+            </select>
+        </p>
+        <p><input type="password" name="password" placeholder="Password Aslab" title="Masukkan Password Aslab"></p>
+        {% endif %}
+        <div class="container-fluid" style="min-height:100%">
+        {% with messages = get_flashed_messages() %} 
+            {% if messages %} 
+                {% for message in messages %}
+                <div class="alert alert-warning alert-dismissible" role="alert" color="red">
+                    <font color="red">{{message}}</font>
+                </div>
+                {% endfor %} 
+            {% endif %}
+        {% endwith %}
+        </div>
+        <p><input id="submit" type="submit" value="Log in" onclick="doSomething()"></p>
+        </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        p {
+            padding-bottom: 2px;
+            padding-top: 2px;
+            margin-bottom: auto;
+            margin-top: auto;
+        }
+        table {
+            border-collapse: collapse;
+        }
+        @media print
+        {
+            tbody {
+                page-break-inside: avoid;
+            }
+            thead {
+                display: table-header-group;
+                margin-top: 100px;
+            }
+        }
+        tbody tr:hover {
+            background-color: lightgray;
+        }
+        th {
+            border: 1px solid;
+            padding-right: 8px;
+            padding-left: 8px;
+        }
+        th.bottom {
+            border-bottom: 3px double;
+        }
+        td {
+            border: 1px solid;
+            padding: 2px 8px;
+            vertical-align: middle;
+        }
+        td.center {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Daftar Kehadiran Praktikum</h1>
+    <p style="white-space:pre">Nama  :  {{nama}}</p>
+    <p style="white-space:pre">NPM   :  {{npm}}</p>
+    <p></p>
+    <table>
+        <thead>
+            <tr>
+                <th class="bottom" rowspan="2">No</th>
+                <th class="bottom" rowspan="2">Mata Kuliah</th>
+                <th class="bottom" rowspan="2">Kelas</th>
+                <th colspan="{{max_pertemuan}}">Pertemuan</th>
+            </tr>
+            <tr>
+                {% for i in range(max_pertemuan) %}
+                <th class="bottom">{{i+1}}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in range(alist|length) %}
+            <tr>
+                <td class="center nomor">{{i+1}}</td>
+                <td class="left matkul">{{alist[i]['matkul']}}</td>
+                <td class="center kelas">{{alist[i]['kelas']}}</td>
+                {% for j in range(max_pertemuan) %}
+                <td class="center {{j+1}}">{{alist[i]['Pertemuan'][j]}}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p>Keterangan: H = Hadir, TH = Tidak Hadir</p>
+</body>
+</html>

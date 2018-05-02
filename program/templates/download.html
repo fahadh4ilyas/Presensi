@@ -1,0 +1,116 @@
+ <!DOCTYPE html>
+<html>
+<head>
+<style>
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,700);
+
+body {
+  background: #456;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.download {
+  width: 400px;
+  margin: 16px auto;
+  font-size: 16px;
+}
+
+.download-header,
+.download p {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.download-header {
+  background: #28d;
+  padding: 20px;
+  font-size: 1.4em;
+  font-weight: normal;
+  text-align: center;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.download-container {
+  background: #ebebeb;
+  padding: 12px;
+}
+
+.download p {
+  padding: 12px;
+}
+
+.download input,
+.download select {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  border-width: 1px;
+  border-style: solid;
+  padding: 16px;
+  outline: 0;
+  font-family: inherit;
+  font-size: 0.95em;
+}
+
+.download select[type="text"] {
+  background: #fff;
+  border-color: #bbb;
+  color: #555;
+}
+
+.download select[type="text"]:focus {
+  border-color: #888;
+}
+
+.download input[type="submit"] {
+  background: #28d;
+  border-color: transparent;
+  color: #fff;
+  cursor: pointer;
+}
+
+.download input[type="submit"]:hover {
+  background: #17c;
+}
+
+.download input[type="submit"]:focus {
+  border-color: #05a;
+}
+</style>
+<script>
+function doSomething(){
+    var val = document.getElementById("berkas").value;
+    var str = "{{url_for('get_download',nf='')}}";
+    document.getElementById("submit").setAttribute("formaction",str.slice(0,-1)+val+'/');
+}    
+</script>
+</head> 
+<body>
+<div class="download">
+    <h2 class="download-header">Unduh Berkas Praktikum</h2>
+    <form class="download-container" action="{{url_for('get_download',nf='File')}}" method="post" target="_blank">
+        <p>
+            <select id="berkas" type="text" name="berkas">
+                <option value="">Pilih Berkas</option>
+                {% for name in daftar_berkas %}
+                <option value="{{name}}">{{name}}</option>
+                {% endfor %}
+            </select>
+        </p>
+        <div class="container-fluid" style="min-height:100%">
+        {% with messages = get_flashed_messages() %} 
+            {% if messages %} 
+                {% for message in messages %}
+                <div class="alert alert-warning alert-dismissible" role="alert" color="red">
+                    <font color="red">{{message}}</font>
+                </div>
+                {% endfor %} 
+            {% endif %}
+        {% endwith %}
+        </div>
+        <p><input id="submit" type="submit" value="Unduh" onclick="doSomething()"></p>
+    </form>
+</div>
+</body>
+</html>

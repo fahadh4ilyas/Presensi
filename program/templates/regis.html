@@ -1,0 +1,134 @@
+ <!DOCTYPE html>
+<html>
+<head>
+<style>
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,700);
+
+body {
+  background: #456;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.regis {
+  width: 400px;
+  margin: 16px auto;
+  font-size: 16px;
+}
+
+.regis-header,
+.regis p {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.regis-header {
+  background: #28d;
+  padding: 20px;
+  font-size: 1.4em;
+  font-weight: normal;
+  text-align: center;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.regis-container {
+  background: #ebebeb;
+  padding: 12px;
+}
+
+.regis p {
+  padding: 12px;
+}
+
+.regis input,
+.regis select {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  border-width: 1px;
+  border-style: solid;
+  padding: 16px;
+  outline: 0;
+  font-family: inherit;
+  font-size: 0.95em;
+}
+
+.regis input[type="text"],
+.regis input[type="password"] {
+  background: #fff;
+  border-color: #bbb;
+  color: #555;
+}
+
+.regis input[type="text"]:focus,
+.regis input[type="password"]:focus {
+  border-color: #888;
+}
+
+.regis input[type="submit"] {
+  background: #28d;
+  border-color: transparent;
+  color: #fff;
+  cursor: pointer;
+}
+
+.regis input[type="submit"]:hover {
+  background: #17c;
+}
+
+.regis input[type="submit"]:focus {
+  border-color: #05a;
+}
+</style>
+
+<script>
+function doSomething(){
+    var kls = document.getElementById("kelas").value;
+    var npm = document.getElementById("npm").value;
+    {% if aslab == False %}
+    var str = "{{url_for('get_regis',mk=matkul,kl='',np='')}}";
+    {% else %}
+    var str = "{{url_for('get_remove_aslab',mk=matkul,kl='',np='')}}";
+    {% endif %}
+    document.getElementById("submit").setAttribute("formaction",str.slice(0,-2)+kls+'/'+npm+'/');
+}    
+</script>
+</head> 
+<body>
+<div class="regis">
+    {% if aslab == False %}
+    <h2 class="regis-header">Registrasi Praktikum {{matkul}}</h2>
+    <form class="regis-container" action="{{url_for('get_regis',mk=matkul,kl='X',np='0')}}" method="post">
+    {% else %}
+    <h2 class="regis-header">Penghapusan Registrasi<br>Praktikum {{matkul}}</h2>
+    <form class="regis-container" action="{{url_for('get_remove_aslab',mk=matkul,kl='X',np='0')}}" method="post">
+    {% endif %}
+        <p><input type="text" name="nama" pattern="([A-Za-z]+\.{0,1}\,{0,1}\s{0,1})+" placeholder="Nama" title="Masukkan Namamu Dengan Benar dan Lengkap!"></p>
+        <p><input id="npm" type="text" name="npm" pattern="1[4-8][0-9]{8}" placeholder="NPM" title="Hanya Angka Berawalan 14 s/d 18"></p>
+        <p>
+            <select id="kelas" type="text" name="kelas">
+                <option value="">Pilih Kelas</option>
+                {% for i in daftar_kelas %}
+                <option value="{{i}}">{{i}}</option>
+                {% endfor %}
+            </select>
+        </p>
+        {% if aslab == True %}
+        <p><input type="password" name="password" placeholder="Password Aslab" title="Masukkan Password Aslab"></p>
+        {% endif %}
+        <div class="container-fluid" style="min-height:100%">
+        {% with messages = get_flashed_messages() %} 
+            {% if messages %} 
+                {% for message in messages %}
+                <div class="alert alert-warning alert-dismissible" role="alert" color="red">
+                    <font color="red">{{message}}</font>
+                </div>
+                {% endfor %} 
+            {% endif %}
+        {% endwith %}
+        </div>
+        <p><input id="submit" type="submit" value="Registrasi" onclick="doSomething()"></p>
+        </form>
+</div>
+</body>
+</html>
