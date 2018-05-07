@@ -81,6 +81,7 @@ body {
 <script>
 function doSomething(){
     var val = document.getElementById("berkas").value;
+    if (val=="") val="File";
     var str = "{{url_for('get_download',nf='')}}";
     document.getElementById("submit").setAttribute("formaction",str.slice(0,-1)+val+'/');
 }    

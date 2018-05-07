@@ -83,12 +83,15 @@ body {
 <script>
 function doSomething(){
     var npm = document.getElementById("npm").value;
+    if (npm=="") npm="0";
     var meja = document.getElementById("meja").value;
+    if (meja=="") meja="0";
     {% if aslab == False %}
     var str = "{{url_for('get_login',mk=matkul,kl=kelas,np='',mj='')}}";
     document.getElementById("submit").setAttribute("formaction",str.slice(0,-2)+npm+'/'+meja+'/');
     {% else %}
     var kls = document.getElementById("kelas").value;
+    if (kls=="") kls="{{kelas}}";
     var str = "{{url_for('get_login_aslab',mk=matkul,kl='',np='',mj='')}}";
     document.getElementById("submit").setAttribute("formaction",str.slice(0,-3)+kls+'/'+npm+'/'+meja+'/');
     {% endif %}

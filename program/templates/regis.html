@@ -84,7 +84,9 @@ body {
 <script>
 function doSomething(){
     var kls = document.getElementById("kelas").value;
+    if (kls=="") kls="kelas";
     var npm = document.getElementById("npm").value;
+    if (npm=="") npm="0";
     {% if aslab == False %}
     var str = "{{url_for('get_regis',mk=matkul,kl='',np='')}}";
     {% else %}
@@ -98,10 +100,10 @@ function doSomething(){
 <div class="regis">
     {% if aslab == False %}
     <h2 class="regis-header">Registrasi Praktikum {{matkul}}</h2>
-    <form class="regis-container" action="{{url_for('get_regis',mk=matkul,kl='X',np='0')}}" method="post">
+    <form class="regis-container" action="{{url_for('get_regis',mk=matkul,kl='kelas',np='0')}}" method="post">
     {% else %}
     <h2 class="regis-header">Penghapusan Registrasi<br>Praktikum {{matkul}}</h2>
-    <form class="regis-container" action="{{url_for('get_remove_aslab',mk=matkul,kl='X',np='0')}}" method="post">
+    <form class="regis-container" action="{{url_for('get_remove_aslab',mk=matkul,kl='kelas',np='0')}}" method="post">
     {% endif %}
         <p><input type="text" name="nama" pattern="([A-Za-z]+\.{0,1}\,{0,1}\s{0,1})+" placeholder="Nama" title="Masukkan Namamu Dengan Benar dan Lengkap!"></p>
         <p><input id="npm" type="text" name="npm" pattern="1[4-8][0-9]{8}" placeholder="NPM" title="Hanya Angka Berawalan 14 s/d 18"></p>

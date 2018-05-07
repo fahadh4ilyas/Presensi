@@ -1,21 +1,56 @@
 import os,sys,getopt,logging
-from flask import Flask,request,render_template,flash,send_file
+from flask import Flask,request,render_template,flash,send_file,jsonify
 
 app = Flask(__name__)
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+DATABASE = os.path.join(BASE_DIR, 'database')+os.path.sep
 BERKAS = os.path.join(BASE_DIR, 'berkas')+os.path.sep
 LOGS = os.path.join(BASE_DIR, 'logs')+os.path.sep
 BERKAS_UNDUH = os.path.join(BERKAS, 'unduh')+os.path.sep
 BERKAS_UNGGAH = os.path.join(BERKAS, 'unggah')+os.path.sep
 
+if not os.path.exists(DATABASE):
+    os.makedirs(DATABASE)
 if not os.path.exists(BERKAS_UNDUH):
     os.makedirs(BERKAS_UNDUH)
 if not os.path.exists(BERKAS_UNGGAH):
     os.makedirs(BERKAS_UNGGAH)
 if not os.path.exists(LOGS):
     os.makedirs(LOGS)
+
+try:
+    MATKUL_LIST = []
+    with open(DATABASE+'matkul.txt','r') as afile:
+        for i in afile.readlines():
+            if i[-1]=='\n':
+                MATKUL_LIST.append(i[:-1].split(','))
+            elif i!='\n':
+                MATKUL_LIST.append(i.split(','))
+except:
+    with open(DATABASE+'matkul.txt','w') as afile:
+        afile.write('MD1,Matematika Dasar 1\nMD2,Matematika Dasar 2\nALPROG,Algoritma dan Pemrograman\nMETNUM,Metode Numerik')
+    MATKUL_LIST = [['MD1','Matematika Dasar 1'],
+                   ['MD2','Matematika Dasar 2'],
+                   ['ALPROG','Algoritma dan Pemrograman'],
+                   ['METNUM','Metode Numerik']]
+KELAS_DICT = {}
+for i in [j[0] for j in MATKUL_LIST]:
+    if not os.path.exists(DATABASE+i+os.path.sep):
+        os.makedirs(DATABASE+i+os.path.sep)
+    KELAS_DICT[i] = []
+    try:
+        with open(DATABASE+i+os.path.sep+'kelas.txt','r') as afile:
+            for k in afile.readlines():
+                if k[-1]=='\n':
+                    KELAS_DICT[i].append(k[:-1])
+                elif k!='\n':
+                    KELAS_DICT[i].append(k)
+    except:
+        with open(DATABASE+i+os.path.sep+'kelas.txt','w') as afile:
+            afile.write('A\nB\nC\nD\nE')
+        KELAS_DICT[i] = ['A','B','C','D','E']
 
 HELPER = '''python filetrans.py -p <port>'''
 
@@ -47,7 +82,7 @@ def get_download(nf):
 def upload():
     if not os.path.exists(BERKAS_UNDUH):
         os.makedirs(BERKAS_UNDUH)
-    return render_template('upload.html')
+    return render_template('upload.html',matkul_list=[j[0] for j in MATKUL_LIST])
 
 @app.route('/unggah/<mk>/<kl>/<np>/<nf>/',methods=['POST'])
 def get_upload(mk,kl,np,nf):
@@ -64,11 +99,16 @@ def get_upload(mk,kl,np,nf):
         flash('BERKAS BELUM DIPILIH!')
         return upload()
     filename = os.path.basename(afile.filename)
-    afile.save(os.path.join(BERKAS_UNGGAH+request.form['matkul']+os.path.sep+filename)
+    afile.save(os.path.join(BERKAS_UNGGAH+request.form['matkul']+os.path.sep+filename))
     logger.info(request.form['nama']+' ('+request.form['npm']+') dari '+request.form['matkul']+' kelas '+request.form['kelas']+' telah menggungah '+filename)
     return render_template('redirect_upload.html')
     
-    
+@app.route('/get_kelas/<matkul>')
+def get_kelas(matkul):
+    if matkul not in KELAS_DICT.keys():                                                                 
+        return jsonify([])
+    else:                                                                                    
+        return jsonify(KELAS_DICT[matkul])
 
 if __name__ == '__main__':
     try:

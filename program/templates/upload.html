@@ -1,1 +1,166 @@
-aaa
+ <!DOCTYPE html>
+<html>
+<head>
+    
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous">
+</script>
+
+<script>
+$(document).ready(function() {
+$('#matkul').change(function() {
+
+  var matkul = $('#matkul').val();
+
+  // Make Ajax Request and expect JSON-encoded data
+  $.getJSON(
+    '/get_kelas' + '/' + matkul,
+    function(data) {
+
+      // Remove old options
+      $('#kelas').find('option').remove();                                
+      $('#kelas').append('<option value="">Pilih Kelas</option>');
+      // Add new items
+      $.each(data, function(key, val) {
+        var option_item = '<option value="' + val + '">' + val + '</option>'
+        $('#kelas').append(option_item);
+      });
+    }
+  );
+});
+});
+
+function doSomething(){
+    var npm = document.getElementById("npm").value;
+    if (npm=="") npm="0";
+    var mkl = document.getElementById("matkul").value;
+    if (mkl=="") mkl="matkul";
+    var kls = document.getElementById("kelas").value;
+    if (kls=="") kls="kelas";
+    var nf = document.getElementById("file").value.split('\\').pop().split('/').pop();
+    if (nf=="") nf="File";
+    var str = "{{url_for('get_upload',mk='',kl='',np='',nf='')}}";
+    document.getElementById("nama").setAttribute("readonly","readonly");
+    document.getElementById("npm").setAttribute("readonly","readonly");
+    document.getElementById("matkul").setAttribute("readonly","readonly");
+    document.getElementById("kelas").setAttribute("readonly","readonly");
+    document.getElementById("file").setAttribute("readonly","readonly");
+    document.getElementById("status").removeAttribute("hidden");
+    document.getElementById("submit").setAttribute("formaction",str.slice(0,-4)+mkl+'/'+kls+'/'+npm+'/'+nf+'/');
+}
+</script>
+    
+<style>
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,700);
+
+body {
+  background: #456;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.upload {
+  width: 400px;
+  margin: 16px auto;
+  font-size: 16px;
+}
+
+.upload-header,
+.upload p {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.upload-header {
+  background: #28d;
+  padding: 20px;
+  font-size: 1.4em;
+  font-weight: normal;
+  text-align: center;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.upload-container {
+  background: #ebebeb;
+  padding: 12px;
+}
+
+.upload p {
+  padding: 12px;
+}
+
+.upload input,
+.upload select {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  border-width: 1px;
+  border-style: solid;
+  padding: 16px;
+  outline: 0;
+  font-family: inherit;
+  font-size: 0.95em;
+}
+
+.upload input[type="text"] {
+  background: #fff;
+  border-color: #bbb;
+  color: #555;
+}
+
+.upload input[type="text"]:focus {
+  border-color: #888;
+}
+
+.upload input[type="submit"] {
+  background: #28d;
+  border-color: transparent;
+  color: #fff;
+  cursor: pointer;
+}
+
+.upload input[type="submit"]:hover {
+  background: #17c;
+}
+
+.upload input[type="submit"]:focus {
+  border-color: #05a;
+}
+</style>
+</head> 
+<body>
+<div class="upload">
+    <h2 class="upload-header">Unggah Berkas Praktikum</h2>
+    <form class="upload-container" action="{{url_for('get_upload',mk='matkul',kl='kelas',np='0',nf='File')}}" method="post" enctype="multipart/form-data">
+        <p><input id="nama" type="text" name="nama" pattern="([A-Za-z]+\.{0,1}\,{0,1}\s{0,1})+" placeholder="Nama" title="Masukkan Namamu Dengan Benar dan Lengkap!"></p>
+        <p><input id="npm" type="text" name="npm" pattern="1[4-8][0-9]{8}" placeholder="NPM" title="Hanya Angka Berawalan 14 s/d 18"></p>
+        <p>
+            <select type="text" id="matkul" name="matkul">
+                <option value="">Pilih Mata Kuliah</option>
+                {% for i in matkul_list %}
+                <option value="{{i}}">{{i}}</option>
+                {% endfor %}
+            </select>
+        </p>
+        <p>
+            <select type="text" id="kelas" name="kelas">
+                <option value="">Pilih Kelas</option>
+            </select>
+        </p>
+        <p><input id="file" type="file" name="file"></p>
+        <div class="container-fluid" style="min-height:100%">
+        {% with messages = get_flashed_messages() %} 
+            {% if messages %} 
+                {% for message in messages %}
+                <div class="alert alert-warning alert-dismissible" role="alert" color="red">
+                    <font color="red">{{message}}</font>
+                </div>
+                {% endfor %} 
+            {% endif %}
+        {% endwith %}
+        </div>
+        <p><input id="submit" type="submit" value="Unggah" onclick="doSomething()"></p>
+        <p id="status" hidden="hidden">Menggunggah berkas. Mohon tunggu...</p>
+    </form>
+</div>
+</body>
+</html>

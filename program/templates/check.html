@@ -32,11 +32,14 @@ $('#matkul').change(function() {
 function doSomething(){
     {% if aslab == False %}
     var npm = document.getElementById("npm").value;
+    if (npm=="") npm="0";
     var str = "{{url_for('get_check',np='')}}";
     document.getElementById("submit").setAttribute("formaction",str.slice(0,-1)+npm+'/');
     {% else %}
     var mkl = document.getElementById("matkul").value;
+    if (mkl=="") mkl="matkul";
     var kls = document.getElementById("kelas").value;
+    if (kls=="") kls="kelas";
     var str = "{{url_for('get_check_aslab',mk='',kl='')}}";
     document.getElementById("submit").setAttribute("formaction",str.slice(0,-2)+mkl+'/'+kls+'/');
     {% endif %}
