@@ -1,4 +1,4 @@
-import os,json,sys,getopt
+import os,json,sys,getopt,logging
 from flask import Flask,request,abort,session,url_for,render_template,flash
 
 app = Flask(__name__)
@@ -6,9 +6,12 @@ app = Flask(__name__)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 DATABASE = os.path.join(BASE_DIR, 'database')+os.path.sep
+LOGS = os.path.join(BASE_DIR, 'logs')+os.path.sep
 
 if not os.path.exists(DATABASE):
     os.makedirs(DATABASE)
+if not os.path.exists(LOGS):
+    os.makedirs(LOGS)
 
 try:
     MATKUL_LIST = []
@@ -74,6 +77,7 @@ def get_regis(mk,kl,np):
                 return regis()
     else:
         DAFTAR_MAHASISWA[request.form['kelas']].append([request.form['npm'],request.form['nama']])
+        logger.info(request.form['nama']+' ('+request.form['npm']+') telah regis di kelas '+request.form['kelas'])
         with open(DATABASE+MATKUL+os.path.sep+'kelas '+request.form['kelas']+'.txt','w') as afile:
             afile.write('\n'.join([','.join(i) for i in DAFTAR_MAHASISWA[request.form['kelas']]]))
         return render_template('redirect_regis.html',aslab=False)
@@ -97,6 +101,7 @@ def get_remove_aslab(mk,kl,np):
     else:
         temp = [i[0] for i in DAFTAR_MAHASISWA[request.form['kelas']]].index(request.form['npm'])
         DAFTAR_MAHASISWA[request.form['kelas']].remove(DAFTAR_MAHASISWA[request.form['kelas']][temp])
+        logger.info(request.form['nama']+' ('+request.form['npm']+') telah dihapus dari kelas '+request.form['kelas'])
         with open(DATABASE+MATKUL+os.path.sep+'kelas '+request.form['kelas']+'.txt','w') as afile:
             afile.write('\n'.join([','.join(i) for i in DAFTAR_MAHASISWA[request.form['kelas']]]))
         return render_template('redirect_regis.html',aslab=True)
@@ -195,7 +200,21 @@ Unutk membuat kelas, tambahkan baris pada file kelas.txt di folder mata kuliah t
                 afile.write('\n'.join([','.join(j) for j in DAFTAR_MAHASISWA[i]]))
 
     try:
-        print("Daftar Mahasiswa akan disimpan di folder "+DATABASE+MATKUL)
+        logger = logging.getLogger(__name__)
+        logger.setLevel(logging.DEBUG)
+        file_handler = logging.FileHandler('{}regis.log'.format(LOGS))
+        file_handler.setLevel(logging.DEBUG)
+        logger_formatter = logging.Formatter('%(levelname)s [%(asctime)s] [%(matkul)s] %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+        file_handler.setFormatter(logger_formatter)
+        logger.addHandler(file_handler)
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(logging.DEBUG)
+        console_handler.setFormatter(logger_formatter)
+        logger.addHandler(console_handler)
+        extra = {'matkul':MATKUL}
+        logger = logging.LoggerAdapter(logger,extra)
+        logger.info('==========START==========')
+        logger.info("Daftar Mahasiswa akan disimpan di folder "+DATABASE+MATKUL)
         app.secret_key = os.urandom(12)
         app.run(host='0.0.0.0',port=p)
     except:

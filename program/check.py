@@ -1,4 +1,4 @@
-import os,json,sys,getopt
+import os,json,sys,getopt,logging
 from flask import Flask,request,abort,session,url_for,render_template,flash,jsonify
 
 app = Flask(__name__)
@@ -6,9 +6,12 @@ app = Flask(__name__)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 DATABASE = os.path.join(BASE_DIR, 'database')+os.path.sep
+LOGS = os.path.join(BASE_DIR, 'logs')+os.path.sep
 
 if not os.path.exists(DATABASE):
     os.makedirs(DATABASE)
+if not os.path.exists(LOGS):
+    os.makedirs(LOGS)
 
 try:
     MATKUL_LIST = []
@@ -80,6 +83,7 @@ def get_check(np):
         for adict in alist:
             while len(adict['Pertemuan']) < max_pertemuan:
                 adict['Pertemuan'].append('')
+        logger.info(request.form['nama']+' ('+request.form['npm']+') sedang memeriksa presensinya')
         return render_template('tabel_mahasiswa.html',
                                nama=request.form['nama'],
                                npm=request.form['npm'],
@@ -122,6 +126,7 @@ def get_check_aslab(mk,kl):
                 alist[i][1]['Pertemuan'] = ['H' if j!='0' else 'TH' for j in temp]
             else:
                 alist[i][1]['Pertemuan'] = temp
+        logger.info('Presensi matkul '+request.form['matkul']+' kelas '+request.form['kelas']+' sedang diperiksa aslab')
         return render_template('tabel_aslab.html',
                                nama_matkul=nama_matkul,
                                kelas=KELAS,
@@ -166,6 +171,18 @@ if __name__ == '__main__':
             sys.exit(2)
 
     try:
+        logger = logging.getLogger(__name__)
+        logger.setLevel(logging.DEBUG)
+        file_handler = logging.FileHandler('{}check.log'.format(LOGS))
+        file_handler.setLevel(logging.DEBUG)
+        logger_formatter = logging.Formatter('%(levelname)s [%(asctime)s] %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+        file_handler.setFormatter(logger_formatter)
+        logger.addHandler(file_handler)
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(logging.DEBUG)
+        console_handler.setFormatter(logger_formatter)
+        logger.addHandler(console_handler)
+        logger.info('==========START==========')
         app.secret_key = os.urandom(12)
         app.run(host='0.0.0.0',port=p)
     except:

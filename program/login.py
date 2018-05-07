@@ -1,4 +1,4 @@
-import os,json,sys,getopt
+import os,json,sys,getopt,logging
 from flask import Flask,request,abort,session,url_for,render_template,flash
 
 app = Flask(__name__)
@@ -6,9 +6,12 @@ app = Flask(__name__)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 DATABASE = os.path.join(BASE_DIR, 'database')+os.path.sep
+LOGS = os.path.join(BASE_DIR, 'logs')+os.path.sep
 
 if not os.path.exists(DATABASE):
     os.makedirs(DATABASE)
+if not os.path.exists(LOGS):
+    os.makedirs(LOGS)
 
 try:
     MATKUL_LIST = []
@@ -71,6 +74,7 @@ def get_login(mk,kl,np,mj):
         PRESENSI_LIST[request.form['npm']]['Pertemuan'][PERTEMUAN] = request.form['meja']
         with open(DATABASE+MATKUL+os.path.sep+'kelas '+KELAS+'.json','w') as afile:
             json.dump(PRESENSI_LIST,afile)
+        logger.info(request.form['nama']+' ('+request.form['npm']+') telah login di meja '+request.form['meja'])
         return render_template('redirect_login.html',aslab=False)
 
 @app.route('/aslab/')
@@ -114,8 +118,10 @@ def get_login_aslab(mk,kl,np,mj):
             return login_aslab()
         if request.form['hadir'] == '1':
             TEMP_LIST[request.form['npm']]['Pertemuan'][PERTEMUAN] = request.form['meja']
+            logger.info(request.form['nama']+' ('+request.form['npm']+') kelas '+request.form['kelas']+' telah login di meja '+request.form['meja'])
         else:
             TEMP_LIST[request.form['npm']]['Pertemuan'][PERTEMUAN] = '0'
+            logger.info(request.form['nama']+' ('+request.form['npm']+') kelas '+request.form['kelas']+' telah ditandai tidak hadir')
         with open(DATABASE+MATKUL+os.path.sep+'kelas '+request.form['kelas']+'.json','w') as afile:
             json.dump(TEMP_LIST,afile)
         PRESENSI_LIST = TEMP_LIST
@@ -233,7 +239,21 @@ Unutk membuat kelas, tambahkan baris pada file kelas.txt di folder mata kuliah t
             sys.exit(2)
 
     try:
-        print("Presensi akan disimpan di folder "+DATABASE+MATKUL)
+        logger = logging.getLogger(__name__)
+        logger.setLevel(logging.DEBUG)
+        file_handler = logging.FileHandler('{}login.log'.format(LOGS))
+        file_handler.setLevel(logging.DEBUG)
+        logger_formatter = logging.Formatter('%(levelname)s [%(asctime)s] [%(matkul)s-%(kelas)s-%(pertemuan)s] %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+        file_handler.setFormatter(logger_formatter)
+        logger.addHandler(file_handler)
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(logging.DEBUG)
+        console_handler.setFormatter(logger_formatter)
+        logger.addHandler(console_handler)
+        extra = {'matkul':MATKUL,'kelas':KELAS,'pertemuan':PERTEMUAN}
+        logger = logging.LoggerAdapter(logger,extra)
+        logger.info('==========START==========')
+        logger.info("Presensi akan disimpan di folder "+DATABASE+MATKUL)
         app.secret_key = os.urandom(12)
         app.run(host='0.0.0.0',port=p)
     except:
