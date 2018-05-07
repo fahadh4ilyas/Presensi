@@ -1,5 +1,7 @@
 database
 berkas
 logs
+windows
+linux
 *.exe
 *.bat
