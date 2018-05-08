@@ -10,6 +10,8 @@ $(document).ready(function() {
 $('#matkul').change(function() {
 
   var matkul = $('#matkul').val();
+  
+  $('#matkul2').val(matkul);
 
   // Make Ajax Request and expect JSON-encoded data
   $.getJSON(
@@ -29,6 +31,16 @@ $('#matkul').change(function() {
 });
 });
 
+$(document).ready(function() {
+$('#kelas').change(function() {
+
+  var kelas = $('#kelas').val();
+  
+  $('#kelas2').val(kelas);
+  
+});
+});
+
 function doSomething(){
     var npm = document.getElementById("npm").value;
     if (npm=="") npm="0";
@@ -41,8 +53,8 @@ function doSomething(){
     var str = "{{url_for('get_upload',mk='',kl='',np='',nf='')}}";
     document.getElementById("nama").setAttribute("readonly","readonly");
     document.getElementById("npm").setAttribute("readonly","readonly");
-    document.getElementById("matkul").setAttribute("readonly","readonly");
-    document.getElementById("kelas").setAttribute("readonly","readonly");
+    document.getElementById("matkul").setAttribute("disabled","disabled");
+    document.getElementById("kelas").setAttribute("disabled","disabled");
     document.getElementById("file").setAttribute("readonly","readonly");
     document.getElementById("status").removeAttribute("hidden");
     document.getElementById("submit").setAttribute("formaction",str.slice(0,-4)+mkl+'/'+kls+'/'+npm+'/'+nf+'/');
@@ -145,11 +157,13 @@ body {
                 {% endfor %}
             </select>
         </p>
+        <input type="hidden" id="matkul2" name="matkul" value="">
         <p>
             <select type="text" id="kelas" name="kelas">
                 <option value="">Pilih Kelas</option>
             </select>
         </p>
+        <input type="hidden" id="kelas2" name="kelas" value="">
         <p><input id="file" type="file" name="file"></p>
         <div class="container-fluid" style="min-height:100%">
         {% with messages = get_flashed_messages() %} 
