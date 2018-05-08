@@ -1,9 +1,10 @@
  <!DOCTYPE html>
 <html>
 <head>
-    
-<script type="text/javascript" src="{{url_for('static',filename='jquery-3.3.1.min.js')}}">
-</script>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="{{url_for('static',filename='bootstrap.min.css')}}">
+<script type="text/javascript" src="{{url_for('static',filename='jquery-3.3.1.min.js')}}"></script>
+<script type="text/javascript" src="{{url_for('static',filename='bootstrap.min.js')}}"></script>
 
 <script>
 $(document).ready(function() {
@@ -52,6 +53,8 @@ $('#file').change(function() {
 });
 
 function doSomething(){
+    $('#pleasewaitLoading').modal('show');
+
     var npm = document.getElementById("npm").value;
     if (npm=="") npm="0";
     var mkl = document.getElementById("matkul").value;
@@ -191,6 +194,22 @@ body {
         </div>
         <div id="status" hidden="hidden">Menggunggah berkas. Mohon tunggu...</div>
         <p><input id="submit" type="submit" value="Unggah" onclick="doSomething()"></p>
+        <div class="modal fade" id="pleasewaitLoading" data-backdrop="static" data-keyboard="false" role="dialog">
+            <div style="display:table;height: 100%;width: 100%;">
+                <div class="modal-dialog" style="display: table-cell;vertical-align: middle;">
+                    <div class="modal-content" style="width:inherit;max-width:inherit;height:inherit;margin: 0 auto;">
+                        <div class="modal-body">
+                            <div style="margin: 0 auto;">
+                                <img src='{{url_for("static",filename="loading.gif")}}' alt="Loading..." style="width:200px;height:200px;margin: 0 auto;display:block;"/>
+                            </div>
+                            <div style="margin: 0 auto;">
+                                <h3 style="text-align:center"><strong>Sedang mengunggah.<br>Mohon menunggu...</strong></h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </form>
 </div>
 </body>
