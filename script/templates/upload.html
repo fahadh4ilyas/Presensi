@@ -2,7 +2,7 @@
 <html>
 <head>
     
-<script src="{{url_for('static',filename='jquery-3.3.1.min.js')}}" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous">
+<script type="text/javascript" src="{{url_for('static',filename='jquery-3.3.1.min.js')}}">
 </script>
 
 <script>
@@ -158,8 +158,8 @@ body {
             {% endif %}
         {% endwith %}
         </div>
+        <div id="status" hidden="hidden">Menggunggah berkas. Mohon tunggu...</div>
         <p><input id="submit" type="submit" value="Unggah" onclick="doSomething()"></p>
-        <p id="status" hidden="hidden">Menggunggah berkas. Mohon tunggu...</p>
     </form>
 </div>
 </body>
