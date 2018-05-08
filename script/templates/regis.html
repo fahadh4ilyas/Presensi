@@ -41,7 +41,8 @@ body {
 }
 
 .regis input,
-.regis select {
+.regis select,
+.regis option {
   box-sizing: border-box;
   display: block;
   width: 100%;
@@ -54,14 +55,18 @@ body {
 }
 
 .regis input[type="text"],
-.regis input[type="password"] {
+.regis input[type="password"],
+.regis select,
+.regis option {
   background: #fff;
   border-color: #bbb;
   color: #555;
 }
 
 .regis input[type="text"]:focus,
-.regis input[type="password"]:focus {
+.regis input[type="password"]:focus,
+.regis select:focus,
+.regis option:focus {
   border-color: #888;
 }
 

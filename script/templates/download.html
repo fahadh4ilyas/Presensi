@@ -41,7 +41,8 @@ body {
 }
 
 .download input,
-.download select {
+.download select,
+.download option {
   box-sizing: border-box;
   display: block;
   width: 100%;
@@ -53,13 +54,15 @@ body {
   font-size: 0.95em;
 }
 
-.download select[type="text"] {
+.download select[type="text"],
+.download option {
   background: #fff;
   border-color: #bbb;
   color: #555;
 }
 
-.download select[type="text"]:focus {
+.download select[type="text"]:focus,
+.download option:focus {
   border-color: #888;
 }
 

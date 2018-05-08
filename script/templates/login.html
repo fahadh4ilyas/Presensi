@@ -41,7 +41,8 @@ body {
 }
 
 .login input,
-.login select {
+.login select,
+.login option {
   box-sizing: border-box;
   display: block;
   width: 100%;
@@ -54,14 +55,18 @@ body {
 }
 
 .login input[type="text"],
-.login input[type="password"] {
+.login input[type="password"],
+.login select,
+.login option {
   background: #fff;
   border-color: #bbb;
   color: #555;
 }
 
 .login input[type="text"]:focus,
-.login input[type="password"]:focus {
+.login input[type="password"]:focus,
+.login select:focus,
+.login option:focus {
   border-color: #888;
 }
 

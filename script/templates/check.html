@@ -86,7 +86,8 @@ body {
 }
 
 .check input,
-.check select {
+.check select,
+.check option {
   box-sizing: border-box;
   display: block;
   width: 100%;
@@ -99,14 +100,18 @@ body {
 }
 
 .check input[type="text"],
-.check input[type="password"] {
+.check input[type="password"],
+.check select,
+.check option {
   background: #fff;
   border-color: #bbb;
   color: #555;
 }
 
 .check input[type="text"]:focus,
-.check input[type="password"]:focus {
+.check input[type="password"]:focus,
+.check select:focus,
+.check option:focus {
   border-color: #888;
 }
 

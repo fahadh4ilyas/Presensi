@@ -89,7 +89,8 @@ body {
 }
 
 .upload input,
-.upload select {
+.upload select,
+.upload option {
   box-sizing: border-box;
   display: block;
   width: 100%;
@@ -101,13 +102,17 @@ body {
   font-size: 0.95em;
 }
 
-.upload input[type="text"] {
+.upload input[type="text"],
+.upload select,
+.upload option {
   background: #fff;
   border-color: #bbb;
   color: #555;
 }
 
-.upload input[type="text"]:focus {
+.upload input[type="text"]:focus,
+.upload select:focus,
+.upload option:focus {
   border-color: #888;
 }
 
