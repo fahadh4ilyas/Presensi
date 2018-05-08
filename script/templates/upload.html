@@ -41,6 +41,16 @@ $('#kelas').change(function() {
 });
 });
 
+$(document).ready(function() {
+$('#file').change(function() {
+
+  $('#file-container').find('input').remove();
+  $('#file').clone().appendTo('#file-container');
+  $('#file-container').find('input').attr('id','file2');
+  
+});
+});
+
 function doSomething(){
     var npm = document.getElementById("npm").value;
     if (npm=="") npm="0";
@@ -55,7 +65,7 @@ function doSomething(){
     document.getElementById("npm").setAttribute("readonly","readonly");
     document.getElementById("matkul").setAttribute("disabled","disabled");
     document.getElementById("kelas").setAttribute("disabled","disabled");
-    document.getElementById("file").setAttribute("readonly","readonly");
+    document.getElementById("file").setAttribute("disabled","disabled");
     document.getElementById("status").removeAttribute("hidden");
     document.getElementById("submit").setAttribute("formaction",str.slice(0,-4)+mkl+'/'+kls+'/'+npm+'/'+nf+'/');
 }
@@ -165,6 +175,7 @@ body {
         </p>
         <input type="hidden" id="kelas2" name="kelas" value="">
         <p><input id="file" type="file" name="file"></p>
+        <div id="file-container" hidden="hidden"></div>
         <div class="container-fluid" style="min-height:100%">
         {% with messages = get_flashed_messages() %} 
             {% if messages %} 
