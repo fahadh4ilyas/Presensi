@@ -124,7 +124,8 @@ def get_login_aslab(mk,kl,np,mj):
             logger.info(request.form['nama']+' ('+request.form['npm']+') kelas '+request.form['kelas']+' telah ditandai tidak hadir')
         with open(DATABASE+MATKUL+os.path.sep+'kelas '+request.form['kelas']+'.json','w') as afile:
             json.dump(TEMP_LIST,afile)
-        PRESENSI_LIST = TEMP_LIST
+        if request.form['kelas']==KELAS:
+            PRESENSI_LIST = TEMP_LIST
         return render_template('redirect_login.html',aslab=True)
 
 if __name__ == '__main__':
@@ -217,12 +218,27 @@ Unutk membuat kelas, tambahkan baris pada file kelas.txt di folder mata kuliah t
                 print(HELPER)
                 sys.exit(2)
 
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.DEBUG)
+    file_handler = logging.FileHandler('{}login.log'.format(LOGS))
+    file_handler.setLevel(logging.DEBUG)
+    logger_formatter = logging.Formatter('%(levelname)s [%(asctime)s] [%(matkul)s-%(kelas)s-%(pertemuan)s] %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+    file_handler.setFormatter(logger_formatter)
+    logger.addHandler(file_handler)
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.DEBUG)
+    console_handler.setFormatter(logger_formatter)
+    logger.addHandler(console_handler)
+    extra = {'matkul':MATKUL,'kelas':KELAS,'pertemuan':PERTEMUAN}
+    logger = logging.LoggerAdapter(logger,extra)
+    logger.info('==========START==========')
+
     try:
-        print('Akan mengambil daftar presensi dari berkas "kelas '+KELAS+'.json"')
+        logger.info('Akan mengambil daftar presensi dari berkas "kelas '+KELAS+'.json"')
         with open(DATABASE+MATKUL+os.path.sep+'kelas '+KELAS+'.json','r') as afile:
             PRESENSI_LIST = json.load(afile)
     except Exception as e:
-        print('Berkas "kelas '+KELAS+'.json" belum ada, akan mengambil daftar mahasiswa dari berkas "kelas '+KELAS+'.txt"')
+        logger.info('Berkas "kelas '+KELAS+'.json" belum ada, akan mengambil daftar mahasiswa dari berkas "kelas '+KELAS+'.txt"')
         try:
             with open(DATABASE+MATKUL+os.path.sep+'kelas '+KELAS+'.txt','r') as afile:
                 for i in afile.readlines():
@@ -235,24 +251,10 @@ Unutk membuat kelas, tambahkan baris pada file kelas.txt di folder mata kuliah t
             with open(DATABASE+MATKUL+os.path.sep+'kelas '+KELAS+'.json','w') as afile:
                 json.dump(PRESENSI_LIST,afile)
         except:
-            print('Berkas "kelas '+KELAS+'.txt" belum ada. Buatlah dengan isi tiap baris dengan format: NPM,Nama\nAtau dengan program "regis.py"')
+            logger.warning('Berkas "kelas '+KELAS+'.txt" belum ada. Buatlah dengan isi tiap baris dengan format: NPM,Nama\nAtau dengan program "regis.py"')
             sys.exit(2)
 
     try:
-        logger = logging.getLogger(__name__)
-        logger.setLevel(logging.DEBUG)
-        file_handler = logging.FileHandler('{}login.log'.format(LOGS))
-        file_handler.setLevel(logging.DEBUG)
-        logger_formatter = logging.Formatter('%(levelname)s [%(asctime)s] [%(matkul)s-%(kelas)s-%(pertemuan)s] %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
-        file_handler.setFormatter(logger_formatter)
-        logger.addHandler(file_handler)
-        console_handler = logging.StreamHandler()
-        console_handler.setLevel(logging.DEBUG)
-        console_handler.setFormatter(logger_formatter)
-        logger.addHandler(console_handler)
-        extra = {'matkul':MATKUL,'kelas':KELAS,'pertemuan':PERTEMUAN}
-        logger = logging.LoggerAdapter(logger,extra)
-        logger.info('==========START==========')
         logger.info("Presensi akan disimpan di folder "+DATABASE+MATKUL)
         app.secret_key = os.urandom(12)
         app.run(host='0.0.0.0',port=p)

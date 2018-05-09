@@ -183,10 +183,24 @@ Unutk membuat kelas, tambahkan baris pada file kelas.txt di folder mata kuliah t
             print(HELPER)
             sys.exit(2)
 
-    print('Akan Mengambil daftar mahasiswa jika ada')
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.DEBUG)
+    file_handler = logging.FileHandler('{}regis.log'.format(LOGS))
+    file_handler.setLevel(logging.DEBUG)
+    logger_formatter = logging.Formatter('%(levelname)s [%(asctime)s] [%(matkul)s] %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+    file_handler.setFormatter(logger_formatter)
+    logger.addHandler(file_handler)
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.DEBUG)
+    console_handler.setFormatter(logger_formatter)
+    logger.addHandler(console_handler)
+    extra = {'matkul':MATKUL}
+    logger = logging.LoggerAdapter(logger,extra)
+    logger.info('==========START==========')
+    logger.info('Akan Mengambil daftar mahasiswa jika ada')
     for i in KELAS_LIST:
         try:
-            print('Mengambil daftar mahasiwa kelas '+i)
+            logger.info('Mengambil daftar mahasiwa kelas '+i)
             with open(DATABASE+MATKUL+os.path.sep+'kelas '+i+'.txt','r') as afile:
                 for j in afile.readlines():
                     if j[-1] == '\n':
@@ -195,25 +209,11 @@ Unutk membuat kelas, tambahkan baris pada file kelas.txt di folder mata kuliah t
                         continue
                     DAFTAR_MAHASISWA[i].append(j.split(','))
         except:
-            print('Tidak ada daftar mahasiswa kelas '+i)
+            logger.info('Tidak ada daftar mahasiswa kelas '+i)
             with open(DATABASE+MATKUL+os.path.sep+'kelas '+i+'.txt','w') as afile:
                 afile.write('\n'.join([','.join(j) for j in DAFTAR_MAHASISWA[i]]))
 
     try:
-        logger = logging.getLogger(__name__)
-        logger.setLevel(logging.DEBUG)
-        file_handler = logging.FileHandler('{}regis.log'.format(LOGS))
-        file_handler.setLevel(logging.DEBUG)
-        logger_formatter = logging.Formatter('%(levelname)s [%(asctime)s] [%(matkul)s] %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
-        file_handler.setFormatter(logger_formatter)
-        logger.addHandler(file_handler)
-        console_handler = logging.StreamHandler()
-        console_handler.setLevel(logging.DEBUG)
-        console_handler.setFormatter(logger_formatter)
-        logger.addHandler(console_handler)
-        extra = {'matkul':MATKUL}
-        logger = logging.LoggerAdapter(logger,extra)
-        logger.info('==========START==========')
         logger.info("Daftar Mahasiswa akan disimpan di folder "+DATABASE+MATKUL)
         app.secret_key = os.urandom(12)
         app.run(host='0.0.0.0',port=p)
