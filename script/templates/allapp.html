@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,700);
+
+body {
+  background: #456;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.filetrans {
+  width: 400px;
+  margin: 16px auto;
+  font-size: 16px;
+}
+
+.filetrans-header,
+.filetrans p {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.filetrans-header {
+  background: #28d;
+  padding: 20px;
+  font-size: 1.4em;
+  font-weight: normal;
+  text-align: center;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.filetrans-container {
+  background: #ebebeb;
+  padding: 12px;
+}
+
+.filetrans p {
+  padding: 12px;
+}
+
+.filetrans input {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  border-width: 1px;
+  border-style: solid;
+  padding: 16px;
+  outline: 0;
+  font-family: inherit;
+  font-size: 0.95em;
+}
+
+.filetrans input[type="submit"] {
+  background: #28d;
+  border-color: transparent;
+  color: #fff;
+  cursor: pointer;
+}
+
+.filetrans input[type="submit"]:hover {
+  background: #17c;
+}
+
+.filetrans input[type="submit"]:focus {
+  border-color: #05a;
+}
+</style>
+</head> 
+<body>
+<div class="filetrans">
+    <h2 class="filetrans-header">Pilih Aktivitas</h2>
+    <form class="filetrans-container" method="post">
+        {% if aslab %}
+        <p><input id="submit" type="submit" value="Login Presensi" formaction="{{url_for('login_aslab')}}"></p>
+        <p><input id="submit" type="submit" value="Periksa Presensi" formaction="{{url_for('check_aslab')}}"></p>
+        {% else %}
+        <p><input id="submit" type="submit" value="Login Presensi" formaction="{{url_for('login')}}"></p>
+        <p><input id="submit" type="submit" value="Periksa Presensi" formaction="{{url_for('check')}}"></p>
+        {% endif %}
+        <p><input id="submit" type="submit" value="Transfer Berkas" formaction="{{url_for('filetrans')}}"></p>
+    </form>
+</div>
+</body>
+</html>
