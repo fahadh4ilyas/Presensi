@@ -71,7 +71,11 @@ body {
 </head> 
 <body>
 <div class="filetrans">
-    <h2 class="filetrans-header">Pilih Aktivitas</h2>
+    {% if aslab %}
+    <h2 class="filetrans-header">Pilih Aktivitas Aslab</h2>
+    {% else %}
+    <h2 class="filetrans-header">Pilih Aktivitas Mahasiswa</h2>
+    {% endif %}
     <form class="filetrans-container" method="post">
         {% if aslab %}
         <p><input id="submit" type="submit" value="Login Presensi" formaction="{{url_for('login_aslab')}}"></p>
