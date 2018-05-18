@@ -1,47 +1,114 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <style>
-        p {
-            padding-bottom: 2px;
-            padding-top: 2px;
-            margin-bottom: auto;
-            margin-top: auto;
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+    p {
+        padding-bottom: 2px;
+        padding-top: 2px;
+        margin-bottom: auto;
+        margin-top: auto;
+    }
+    table {
+        border-collapse: collapse;
+    }
+    @media print
+    {
+        tbody {
+            page-break-inside: avoid;
         }
-        table {
-            border-collapse: collapse;
+        thead {
+            display: table-header-group;
+            margin-top: 100px;
         }
-        @media print
-        {
-            tbody {
-                page-break-inside: avoid;
+    }
+    tbody tr:hover {
+        background-color: lightgray;
+    }
+    th {
+        border: 1px solid;
+        padding-right: 8px;
+        padding-left: 8px;
+    }
+    th.bottom {
+        border-bottom: 3px double;
+    }
+    th.bottom:hover {
+        background-color: lightgray;
+    }
+    td.body {
+        border: 1px solid;
+        padding: 2px 8px;
+        vertical-align: middle;
+    }
+    td.center {
+        text-align: center;
+    }
+</style>
+
+<script>
+var post = 0, asc = true;
+
+function sortTable(n) {
+    if(n == post && asc) {
+        asc = false;
+    } else {
+        asc = true;
+    }
+    if(asc) {
+        var x = 1;
+    } else {
+        var x = -1;
+    }
+    
+    var tbl = document.getElementById("presensi");
+    var rows = tbl.getElementsByTagName("TR");
+    var arr = [];
+    var rowlength = rows.length;
+    
+    for(var i=0;i<rowlength;i++) {
+        arr.push(rows[i]);
+    }
+    
+    {% if nomor != True %}
+    arr.sort(function(a,b) {
+        if(a.getElementsByTagName("TD")[n].textContent.toLowerCase() < b.getElementsByTagName("TD")[n].textContent.toLowerCase()) {
+            return -1*x;
+        } else if(a.getElementsByTagName("TD")[n].textContent.toLowerCase() > b.getElementsByTagName("TD")[n].textContent.toLowerCase()) {
+            return 1*x;
+        } else {
+            return 0;
+        }
+    });
+    {% else %}
+    if(n < 3) {
+        arr.sort(function(a,b) {
+            if(a.getElementsByTagName("TD")[n].textContent.toLowerCase() < b.getElementsByTagName("TD")[n].textContent.toLowerCase()) {
+                return -1*x;
+            } else if(a.getElementsByTagName("TD")[n].textContent.toLowerCase() > b.getElementsByTagName("TD")[n].textContent.toLowerCase()) {
+                return 1*x;
+            } else {
+                return 0;
             }
-            thead {
-                display: table-header-group;
-                margin-top: 100px;
-            }
-        }
-        tbody tr:hover {
-            background-color: lightgray;
-        }
-        th {
-            border: 1px solid;
-            padding-right: 8px;
-            padding-left: 8px;
-        }
-        th.bottom {
-            border-bottom: 3px double;
-        }
-        td {
-            border: 1px solid;
-            padding: 2px 8px;
-            vertical-align: middle;
-        }
-        td.center {
-            text-align: center;
-        }
-    </style>
+        });
+    } else {
+        arr.sort(function(a,b) {
+            return (Number(a.getElementsByTagName("TD")[n].textContent) - Number(b.getElementsByTagName("TD")[n].textContent))*x;
+        });
+    }
+    {% endif %}
+    
+    for(i=0;i<rowlength;i++) {
+        arr[i].getElementsByTagName("TD")[0].textContent = (i+1).toString();
+    }
+    
+    arr.forEach(el => {
+        tbl.appendChild(el);
+    });
+    
+    post = n;
+}
+</script>
 </head>
 
 <body>
@@ -53,33 +120,37 @@
         <thead>
             <tr>
                 <th class="bottom" rowspan="2">No</th>
-                <th class="bottom" rowspan="2">NPM</th>
-                <th class="bottom" rowspan="2">Nama</th>
+                <th class="bottom" rowspan="2" onclick="sortTable(1)">NPM</th>
+                <th class="bottom" rowspan="2" onclick="sortTable(2)">Nama</th>
                 <th colspan="{{banyak_pertemuan}}">Pertemuan</th>
             </tr>
             <tr>
                 {% for i in range(banyak_pertemuan) %}
-                <th class="bottom">{{i+1}}</th>
+                <th class="bottom" onclick="sortTable({{i+3}})">{{i+1}}</th>
                 {% endfor %}
             </tr>
         </thead>
-        <tbody>
+        <tfoot>
+            <tr>
+                {% if nomor == True %}
+                <td colspan="{{banyak_pertemuan+3}}">Keterangan: 0 = Tidak Hadir, Selain 0 = Hadir Di Meja Tersebut</td>
+                {% else %}
+                <td colspan="{{banyak_pertemuan+3}}">Keterangan: H = Hadir, TH = Tidak Hadir</td>
+                {% endif %}
+            </tr>
+        </tfoot>
+        <tbody id="presensi">
             {% for i in range(alist|length) %}
             <tr>
-                <td class="center nomor">{{i+1}}</td>
-                <td class="center npm">{{alist[i][0]}}</td>
-                <td class="left nama">{{alist[i][1]['Nama']}}</td>
+                <td class="body center nomor">{{i+1}}</td>
+                <td class="body center npm">{{alist[i][0]}}</td>
+                <td class="body left nama">{{alist[i][1]['Nama']}}</td>
                 {% for j in range(banyak_pertemuan) %}
-                <td class="center {{j+1}}">{{alist[i][1]['Pertemuan'][j]}}</td>
+                <td class="body center {{j+1}}">{{alist[i][1]['Pertemuan'][j]}}</td>
                 {% endfor %}
             </tr>
             {% endfor %}
         </tbody>
     </table>
-    {% if nomor == True %}
-    <p>Keterangan: 0 = Tidak Hadir, Selain 0 = Hadir Di Meja Tersebut</p>
-    {% else %}
-    <p>Keterangan: H = Hadir, TH = Tidak Hadir</p>
-    {% endif %}
 </body>
 </html>
